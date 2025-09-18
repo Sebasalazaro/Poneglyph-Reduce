@@ -29,7 +29,9 @@ void Worker::registerSelf() {
     if (grpc) {
         std::string wid;
         int poll_ms = 1000;
-        bool ok = grpc->RegisterWorker("poneglyph-worker", /*capacity*/ 2, wid, &poll_ms);
+        // Generate unique worker name using hostname + random suffix
+        std::string workerName = "poneglyph-worker-" + std::to_string(rand() % 1000);
+        bool ok = grpc->RegisterWorker(workerName, /*capacity*/ 2, wid, &poll_ms);
         if (ok && !wid.empty()) {
             workerId = wid;
             std::cout << "[gRPC] Registered as " << workerId << " (poll=" << poll_ms << "ms)\n";
@@ -40,9 +42,10 @@ void Worker::registerSelf() {
 
     if (workerId.empty()) {
         // HTTP fallback
+        std::string workerName = "poneglyph-worker-" + std::to_string(rand() % 1000);
         std::ostringstream registrationPayload;
         registrationPayload << "{"
-                << "\"name\":\"poneglyph-worker\","
+                << "\"name\":\"" << workerName << "\","
                 << "\"capacity\":2," // Capacidad de tareas concurrentes
                 << "\"cpu_usage\":" << cpuUsage << ","
                 << "\"memory_usage\":" << memUsage
