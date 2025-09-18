@@ -23,17 +23,16 @@ services:
       - redis
 
   worker:
-    build: ./Poneglyph
-    depends_on:
-      - master
-      - mqtt
+    build: 
+      context: ./Poneglyph
+      dockerfile: Dockerfile.source
     environment:
-      PONEGLYPH_MASTER_URL: http://master:8080
-      MQTT_BROKER: tcp://mqtt:${MQTT_PORT}
-      MQTT_USERNAME: ${MQTT_USERNAME}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      PONEGLYPH_MASTER_URL: http://35.153.249.132:8080
+      MQTT_BROKER: tcp://50.16.155.173:1883
+      MQTT_USERNAME: admin
+      MQTT_PASSWORD: password123
       PONEGLYPH_USE_GRPC: "1"
-      PONEGLYPH_MASTER_GRPC: master:${MASTER_GRPC_PORT}
+      PONEGLYPH_MASTER_GRPC: 35.153.249.132:50051
 
   client:
     build: ./Clover
