@@ -50,6 +50,43 @@ public final class RedisStore implements AutoCloseable {
         ));
     }
 
+    public void removeWorker(String workerId) {
+        if (jedis == null) return;
+        String key = "gridmr:workers:" + workerId;
+        jedis.del(key);
+        System.out.println("[REDIS] Removed worker: " + workerId);
+    }
+
+    public void cleanupStaleWorkers(long staleThresholdMs) {
+        if (jedis == null) return;
+        try {
+            // Get all worker keys
+            var workerKeys = jedis.keys("gridmr:workers:*");
+            long currentTime = System.currentTimeMillis();
+            int removedCount = 0;
+
+            for (String key : workerKeys) {
+                String lastHeartbeatStr = jedis.hget(key, "lastHeartbeat");
+                if (lastHeartbeatStr != null) {
+                    long lastHeartbeat = Long.parseLong(lastHeartbeatStr);
+                    if (currentTime - lastHeartbeat > staleThresholdMs) {
+                        String workerId = jedis.hget(key, "workerId");
+                        jedis.del(key);
+                        removedCount++;
+                        System.out.println("[REDIS] Cleaned up stale worker: " + workerId + 
+                                " (last heartbeat: " + (currentTime - lastHeartbeat) + "ms ago)");
+                    }
+                }
+            }
+            
+            if (removedCount > 0) {
+                System.out.println("[REDIS] Cleaned up " + removedCount + " stale workers");
+            }
+        } catch (Exception e) {
+            System.err.println("[REDIS] Error cleaning up stale workers: " + e.getMessage());
+        }
+    }
+
     // --- Jobs ---
     public void saveJobSpec(JobSpec spec) {
         if (jedis == null) return;
