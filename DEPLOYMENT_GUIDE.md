@@ -20,7 +20,7 @@ scp -i "GridMR-KeyFile.pem" .env ubuntu@35.153.249.132:/opt/Poneglyph-Reduce/
 # SSH y despliegue
 ssh -i "GridMR-KeyFile.pem" ubuntu@35.153.249.132
 cd /opt/Poneglyph-Reduce
-docker compose up -d master redis
+docker compose up redis redisinsight --build -d
 ```
 
 ### 2. Workers - `98.87.213.90`, `98.88.24.152`, `54.145.27.176`
