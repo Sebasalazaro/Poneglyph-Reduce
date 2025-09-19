@@ -72,10 +72,20 @@ def submit_mapreduce_job(example_dir, job_id=None, split_size=64, reducers=2):
         with open(data_path, 'r', encoding='utf-8') as f:
             input_text = f.read()
         
-        print(f"📊 Data size: {len(input_text)} characters")
-        print(f"📊 Split size: {split_size} bytes")
-        print(f"📊 Reducers: {reducers}")
+        input_text=input_text*1000  # Aumentar tamaño para demo
         
+        # Usar split_size fijo para tamaños grandes
+        if split_size == 64:  # Si es el default pequeño
+            split_size = 2048  # 2KB fijo - bueno para demos
+            
+        data_size = len(input_text)
+        estimated_tasks = data_size // split_size
+        
+        print(f"📊 Original data size: {len(input_text)//1000} characters")
+        print(f"📊 Expanded data size: {data_size} characters (x1000 for demo)")
+        print(f"📊 Split size: {split_size} bytes (fixed)")
+        print(f"📊 Estimated tasks: ~{estimated_tasks}")
+        print(f"📊 Reducers: {reducers}")
         # Create job payload
         job = {
             "job_id": job_id,
