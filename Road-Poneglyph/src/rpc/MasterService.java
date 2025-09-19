@@ -154,7 +154,7 @@ public class MasterService extends MasterGrpc.MasterImplBase {
             for (int i = 0; i < ctx.spec.reducers; i++) {
                 int sz = ctx.partitionKV.get(i).size();
                 sizes.add(sz);
-                if (sz == 0) continue;
+                // Create reduce tasks for ALL partitions, including empty ones
                 Task rt = new Task();
                 rt.type = TaskType.REDUCE;
                 rt.taskId = "reduce-" + (rIx++);
