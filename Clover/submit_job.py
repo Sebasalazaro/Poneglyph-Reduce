@@ -3,7 +3,7 @@ import urllib.request
 import argparse
 from urllib.error import URLError, HTTPError
 
-MASTER = os.getenv("MASTER", "http://localhost:8080")
+MASTER = os.getenv("MASTER", "http://35.153.249.132:8080")
 
 def b64(path):
     """Encode file content to base64"""
