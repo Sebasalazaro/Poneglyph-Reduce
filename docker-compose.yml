@@ -25,7 +25,9 @@ services:
   worker:
     build: 
       context: ./Poneglyph
-      dockerfile: Dockerfile.source
+      dockerfile: Dockerfile.prebuilt
+    ports:
+      - "8080:8080"
     environment:
       PONEGLYPH_MASTER_URL: http://35.153.249.132:8080
       MQTT_BROKER: tcp://50.16.155.173:1883
